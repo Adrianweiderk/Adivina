@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Game</title>
+    <style>
+    body {
+        background-image: url(https://i.pinimg.com/originals/cd/6c/fb/cd6cfba191f437ba4ef08beae7af2b31.gif);
+        background-size: cover; /* Para cubrir toda la ventana del navegador */
+        background-position: center; /* Para centrar la imagen */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+    /* El resto de tu estilo CSS aquí */
+        .container {
+            text-align: center;
+            background-color: #0a0a0a;
+            border: 3px solid #444;
+            border-radius: 15px;
+            padding: 20px;
+            width: 400px;
+            box-shadow: 0 0 30px #000;
+            position: relative;
+        }
+        .screen h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .screen p {
+            font-size: 12px;
+            color: #999;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+        .numbers {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .number {
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 15px 20px;
+            font-size: 24px;
+            width: 50px;
+            text-align: center;
+        }
+        .number.active {
+            background-color: #1a1;
+            border-color: #2d2;
+            color: #fff;
+        }
+        .number.showing {
+            background-color: #00f;
+            border-color: #00f;
+            color: #fff;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+        }
+        button {
+            background-color: #5a5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #484;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .header {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #222;
+            padding: 5px 20px;
+            border-radius: 15px;
+            border: 2px solid #444;
+            box-shadow: 0 0 10px #000;
+            width: 80%;
+            text-align: center;
+        }
+        .header p {
+            margin: 0;
+            font-size: 12px;
+        }
+        .footer {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #222;
+            padding: 5px 20px;
+            border-radius: 15px;
+            border: 2px solid #444;
+            box-shadow: 0 0 10px #000;
+            width: 80%;
+            text-align: center;
+        }
+        .footer p {
+            margin: 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+        </div>
+        <div class="screen">
+            <h1>...HACKING...</h1>
+            <p id="time"></p>
+            <div class="numbers">
+                <div class="number" id="num1">?</div>
+                <div class="number" id="num2">?</div>
+                <div class="number" id="num3">?</div>
+                <div class="number" id="num4">?</div>
+                <div class="number" id="num5">?</div>
+                <div class="number" id="num6">?</div>
+            </div>
+            <div class="input-container">
+                <input type="text" id="guess" placeholder="Ingresa los 6 números">
+            </div>
+            <button onclick="checkGuess()">Comprobar</button>
+            <div class="result" id="result"></div>
+        </div>
+        <div class="footer">
+            <p id="timer">Tiempo restante: 1:00</p>
+            <p>SYSTEM STATUS: STANDBY</p>
+        </div>
+    </div>
+
+    <script>
+        const correctNumbers = Array.from({length: 6}, () => Math.floor(Math.random() * 10).toString());
+        console.log('Números correctos:', correctNumbers);
+        let countdown;
+
+        function displayNumbers() {
+            correctNumbers.forEach((num, index) => {
+                setTimeout(() => {
+                    for (let i = 0; i < 6; i++) {
+                        const numElement = document.getElementById(`num${i + 1}`);
+                        if (i === index) {
+                            numElement.innerText = num;
+                            numElement.classList.add('showing');
+                        } else {
+                            numElement.innerText = '?';
+                            numElement.classList.remove('showing');
+                        }
+                    }
+                }, index * 2000);
+            });
+
+            setTimeout(() => {
+                for (let i = 0; i < 6; i++) {
+                    document.getElementById(`num${i + 1}`).innerText = '?';
+                    document.getElementById(`num${i + 1}`).classList.remove('showing');
+                }
+            }, 12000);
+        }
+
+        function checkGuess() {
+            const guess = document.getElementById('guess').value.split('');
+            const resultDiv = document.getElementById('result');
+
+            if (guess.length !== 6) {
+                resultDiv.innerText = 'Debes ingresar 6 números.';
+                return;
+            }
+
+            let correct = true;
+            for (let i = 0; i < 6; i++) {
+                const numElement = document.getElementById(`num${i + 1}`);
+                if (guess[i] !== correctNumbers[i]) {
+                    numElement.classList.remove('active');
+                    correct = false;
+                } else {
+                    numElement.classList.add('active');
+                }
+            }
+
+            if (correct) {
+                resultDiv.innerText = '¡Correcto! Has hackeado el sistema.';
+                // Redireccionar a la página de ganador
+                setTimeout(() => {
+                    window.location.href = 'ganado-adivina.html';
+                }, 2000);
+            } else {
+                resultDiv.innerText = 'Incorrecto. Intenta de nuevo.';
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        function startTimer() {
+            let seconds = 120;
+            countdown = setInterval(() => {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                document.getElementById('timer').innerText = `Tiempo restante: ${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+                if (seconds === 0) {
+                    clearInterval(countdown);
+                    resetGame();
+                } else {
+                    seconds--;
+                }
+            }, 1000);
+        }
+
+        function resetGame() {
+            clearInterval(countdown);
+            document.getElementById('guess').value = '';
+            document.getElementById('result').innerText = '';
+            startTimer();
+            correctNumbers.forEach((num, index) => {
+                setTimeout(() => {
+                    for (let i = 0; i < 6; i++) {
+                        const numElement = document.getElementById(`num${i + 1}`);
+                        numElement.innerText = '?';
+                        numElement.classList.remove('showing');
+                    }
+                }, index * 2000);
+            });
+        }
+
+        window.onload = () => {
+            updateTime();
+            displayNumbers();
+            startTimer();
+        };
+    </script>
+</body>
+</html>
